@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Bluetooth Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+</head>
+<body>
+    <div id="dashboard" class="main-wrapper">
+        <nav class="sidebar">
+            <div class="profile-section">
+                <h3>SyncSphere</h3>
+                <p>Admin Dashboard</p>
+            </div>
+            <ul class="nav-links">
+                <li class="active">Overview</li>
+                <li onclick="window.location.href='insights.html'">Insights</li>
+                <li>User Management</li>
+                <li>Device Controls</li>
+                <li>System Logs</li>
+                <li onclick="logout()" style="margin-top: 40px; color: #ef4444;">Logout</li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <header class="top-bar">
+                <h2>Welcome back, <span id="display-name">Admin</span></h2>
+                <div class="search-box">Search devices or users...</div>
+            </header>
+
+            <div class="dashboard-grid">
+                
+                <div class="card highlight">
+                    <h3>Temperature Sensor</h3>
+                    <h1 id="temp">24°C</h1>
+                    <p>Device: ESP32-Temp Server Room</p>
+                </div>
+
+                <div class="card" id="bt-audio-card">
+                    <h3>Media Controller</h3>
+                    
+                    <audio id="myAudio">
+                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                    </audio>
+                    
+                    <div class="music-btns">
+                        <button class="icon-btn" onclick="playMusic()"><span class="material-symbols-rounded">skip_previous</span></button>
+                        <button class="icon-btn play-btn" onclick="playMusic()"><span class="material-symbols-rounded">play_arrow</span></button>
+                        <button class="icon-btn" onclick="pauseMusic()"><span class="material-symbols-rounded">pause</span></button>
+                        <button class="icon-btn" onclick="playMusic()"><span class="material-symbols-rounded">skip_next</span></button>
+                    </div>
+
+                    <div id="connection-interface">
+                        <button class="btn-primary" onclick="connectBT()">
+                            <span class="material-symbols-rounded">bluetooth</span> Pair Device
+                        </button>
+                    </div>
+
+                    <div id="music-interface" style="display: none; margin-top: 15px;">
+                        <p style="color: #10b981; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 10px;">
+                            <span class="status-dot"></span> CONNECTED TO ESP32
+                        </p>
+                        <button class="btn-primary btn-secondary" style="color:#ef4444;" onclick="disconnectBT()">Disconnect</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Website Analytics</h3>
+                    <ul class="admin-list">
+                        <li><span>Active Visitors</span> <strong>1,204</strong></li>
+                        <li><span>Page Views (Today)</span> <strong>8,430</strong></li>
+                        <li><span>Bounce Rate</span> <strong>34.2%</strong></li>
+                        <li><span>Server Uptime</span> <strong style="color:#10b981;">99.9%</strong></li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>System Health</h3>
+                    <p>CPU Load: <span id="cpu-load">12%</span></p>
+                    <div style="background: #e5e7eb; border-radius: 10px; height: 6px; margin-bottom: 15px;"><div style="background: var(--accent); width: 12%; height: 100%; border-radius: 10px;"></div></div>
+                    
+                    <p>RAM: <span id="ram-usage">45MB / 512MB</span></p>
+                    <div style="background: #e5e7eb; border-radius: 10px; height: 6px; margin-bottom: 15px;"><div style="background: #3b82f6; width: 8%; height: 100%; border-radius: 10px;"></div></div>
+                </div>
+
+                <div class="card">
+                    <h3>Admin Quick Actions</h3>
+                    <div style="display: flex; gap: 10px; flex-direction: column;">
+                        <button class="btn-primary btn-secondary">Clear System Cache</button>
+                        <button class="btn-primary btn-secondary">Restart Database</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Smart Switch</h3>
+                    <p>Target: Server Room Fan</p>
+                    <button id="led-btn" class="btn-primary" style="background: #ef4444;" onclick="toggleLED()">OFF</button>
+                </div>
+
+                <div class="card">
+                    <h3>Social Feed Integration</h3>
+                    <div class="wall-device">
+                        <div class="device-header">
+                            <img src="images/logo.png" class="profile-logo" alt="Logo" onerror="this.style.display='none'">
+                            <div class="profile-info">
+                                <a href="https://www.instagram.com/cinematics_cars" class="profile-name" target="_blank">@cinematics_cars</a>
+                                <span class="status-tag">● LIVE FEED</span>
+                            </div>
+                        </div>
+                        <div class="display-area">
+                            <div id="image-slider" class="image-track">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Activity Logs</h3>
+                    <ul class="admin-list" style="color: var(--text-muted);">
+                        <li><span>User 'jdoe' logged in</span> <span>2 mins ago</span></li>
+                        <li><span>Config updated by Admin</span> <span>1 hour ago</span></li>
+                        <li><span>Database backup complete</span> <span>3 hours ago</span></li>
+                        <li><span>Failed login attempt (IP: 192...)</span> <span style="color:#ef4444;">5 hours ago</span></li>
+                    </ul>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

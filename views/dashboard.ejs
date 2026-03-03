@@ -1,0 +1,33 @@
+<style>
+    body { background: #121212; color: #1DB954; font-family: 'Segoe UI', sans-serif; text-align: center; }
+    .v-container { display: flex; justify-content: center; height: 60px; gap: 4px; margin: 30px; }
+    .bar { width: 8px; background: #1DB954; animation: wave 0.6s infinite alternate; }
+    @keyframes wave { from { height: 10px; } to { height: 50px; } }
+    .card { background: #1e1e1e; padding: 20px; border-radius: 15px; display: inline-block; width: 300px; }
+    button { background: #1DB954; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+</style>
+
+<div class="card">
+    <h2>IoT Speaker: <%= data.id %></h2>
+    <div class="v-container">
+        <div class="bar" style="animation-delay: 0.1s"></div>
+        <div class="bar" style="animation-delay: 0.3s"></div>
+        <div class="bar" style="animation-delay: 0.2s"></div>
+        <div class="bar" style="animation-delay: 0.4s"></div>
+    </div>
+    <p>Status: <b style="color:white"><%= data.status %></b></p>
+    <button onclick="cmd('prev')">PREV</button>
+    <button onclick="cmd('next')">NEXT</button>
+    <br><br>
+    <input type="range" id="vol" onchange="cmd('vol')" value="<%= data.vol %>">
+</div>
+
+<script>
+    function cmd(type) {
+        fetch('/api/set-command', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `cmd=${type}&vol=${document.getElementById('vol').value}`
+        });
+    }
+</script>

@@ -35,36 +35,39 @@ function changeVolume(val) {
 }
 
 async function connectBT() {
-    const statusText = document.getElementById('status');
     const connInterface = document.getElementById('connection-interface');
     const musicInterface = document.getElementById('music-interface');
     
     try {
-        // This tells the browser: "Show me everything you find"
+        // 1. Define filters to find YOUR specific device
+        // You can filter by namePrefix (e.g., 'ESP32' or 'SyncSphere')
         const device = await navigator.bluetooth.requestDevice({
-            acceptAllDevices: true
-            // Note: We removed the 'optionalServices' filter to make it more general
+            filters: [
+                { namePrefix: 'ESP32' }, // Shows any device starting with "ESP32"
+                { namePrefix: 'Sync' }   // Shows "SyncSphere"
+            ],
+            // 2. IMPORTANT: You must list services you intend to use 
+            // 'battery_service' is a standard one; add your custom UUIDs here
+            optionalServices: ['battery_service', 'heart_rate'] 
         });
 
-        // Update UI once a device is picked
-        statusText.innerText = "Connecting to " + device.name + "...";
+        console.log("Found device:", device.name);
         
-        // Connect to the device GATT Server (required by some browsers to finalize connection)
+        // 3. Connect to the GATT Server
         const server = await device.gatt.connect();
 
-        // SUCCESS: Show the Music Player
+        // SUCCESS UI UPDATES
         connInterface.style.display = "none";
         musicInterface.style.display = "block";
         
-        console.log("Successfully connected to:", device.name);
+        // Update the "CONNECTED TO" text in your HTML if you add an ID to it
+        // Example: document.getElementById('device-name-display').innerText = device.name;
 
-        // Listen for accidental disconnection
         device.addEventListener('gattserverdisconnected', onDisconnected);
 
     } catch (error) {
-        console.log("Scan cancelled or failed: " + error);
-        statusText.innerText = "No device selected.";
-        statusText.style.color = "red";
+        console.error("Connection failed:", error);
+        alert("Bluetooth Error: " + error.message);
     }
 }
 
@@ -142,4 +145,5 @@ function startSlideshow() {
 
 loadImages();
 startSlideshow();
+
 

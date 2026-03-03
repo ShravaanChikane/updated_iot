@@ -1,4 +1,4 @@
-// Predefined credentials
+
 const VALID_USER = "admin";
 const VALID_PASS = "1234";
 
@@ -8,18 +8,16 @@ function handleLogin() {
     const errorMsg = document.getElementById('error-msg');
 
     if (userInp === VALID_USER && passInp === VALID_PASS) {
-        // Redirect to the dashboard page
+    
         window.location.href = "dashboard.html";
     } else {
         errorMsg.innerText = "Invalid credentials! Try admin / 1234";
     }
 }
 
-// Function for the Logout button on the dashboard
 function logout() {
     window.location.href = "index.html";
 }
-// --- Music Logic ---
 let audio = document.getElementById("myAudio");
 
 function playMusic() {
@@ -39,30 +37,23 @@ async function connectBT() {
     const musicInterface = document.getElementById('music-interface');
     
     try {
-        // 1. Define filters to find YOUR specific device
-        // You can filter by namePrefix (e.g., 'ESP32' or 'SyncSphere')
         const device = await navigator.bluetooth.requestDevice({
             filters: [
-                { namePrefix: 'ESP32' }, // Shows any device starting with "ESP32"
-                { namePrefix: 'Sync' }   // Shows "SyncSphere"
+                { namePrefix: 'ESP32' }, 
+                { namePrefix: 'Sync' }   
             ],
-            // 2. IMPORTANT: You must list services you intend to use 
-            // 'battery_service' is a standard one; add your custom UUIDs here
+        
             optionalServices: ['battery_service', 'heart_rate'] 
         });
 
         console.log("Found device:", device.name);
         
-        // 3. Connect to the GATT Server
         const server = await device.gatt.connect();
 
-        // SUCCESS UI UPDATES
+       
         connInterface.style.display = "none";
         musicInterface.style.display = "block";
         
-        // Update the "CONNECTED TO" text in your HTML if you add an ID to it
-        // Example: document.getElementById('device-name-display').innerText = device.name;
-
         device.addEventListener('gattserverdisconnected', onDisconnected);
 
     } catch (error) {
@@ -74,20 +65,18 @@ async function connectBT() {
 function onDisconnected(event) {
     const device = event.target;
     console.log('Device ' + device.name + ' is disconnected.');
-    disconnectBT(); // Reset the UI
+    disconnectBT(); 
 }
-// Simulate Live IoT Data
+
 setInterval(() => {
-    // Random Temp between 22 and 26
+    
     const temp = (Math.random() * (26 - 22) + 22).toFixed(1);
     if(document.getElementById('temp')) document.getElementById('temp').innerText = temp + "°C";
 
-    // Random CPU between 10 and 20
     const cpu = Math.floor(Math.random() * 10) + 10;
     if(document.getElementById('cpu-load')) document.getElementById('cpu-load').innerText = cpu + "%";
-}, 3000); // Updates every 3 seconds
+}, 3000); 
 
-// Toggle LED Simulation
 let ledState = false;
 function toggleLED() {
     ledState = !ledState;
@@ -95,7 +84,7 @@ function toggleLED() {
     btn.innerText = ledState ? "ON" : "OFF";
     btn.style.background = ledState ? "#28a745" : "#dc3545";
 }
-// 1. List your actual filenames here (No renaming needed!)
+
 const imageFiles = [
     '10ef58da6b3201ac2b28fbd3ba86fa4a.jpg',
     'Asphalt 8 Air.jpg',
@@ -103,13 +92,12 @@ const imageFiles = [
     'Mclaren P1.jpg',
     'Porsche Taycan Turbo s.jpg',
     'wp6442345-porsche-911-carrera-gts-hd-wallpapers.jpg',
-    // Add all 10 filenames here...
 ];
 
 const sliderTrack = document.getElementById('image-slider');
 const slideInterval = 5000; 
 
-// 2. Loop through your specific filenames
+
 function loadImages() {
     imageFiles.forEach((filename) => {
         const img = document.createElement('img');
@@ -122,7 +110,7 @@ function loadImages() {
 let currentIndex = 0;
 
 function startSlideshow() {
-    // Only start if there are images
+    
     if (imageFiles.length === 0) return;
 
     setInterval(() => {
@@ -146,4 +134,91 @@ function startSlideshow() {
 loadImages();
 startSlideshow();
 
+const ctxLine = document.getElementById('rssiChart').getContext('2d');
+const rssiChart = new Chart(ctxLine, {
+    type: 'line',
+    data: {
+        labels: ['1s', '2s', '3s', '4s', '5s', '6s'],
+        datasets: [{
+            label: 'Signal (dBm)',
+            data: [-65, -59, -80, -81, -56, -55],
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: false }, x: { display: false } }
+    }
+});
 
+
+const ctxPie = document.getElementById('devicePieChart').getContext('2d');
+new Chart(ctxPie, {
+    type: 'doughnut',
+    data: {
+        labels: ['ESP32', 'Sensors', 'Actuators'],
+        datasets: [{
+            data: [4, 12, 7],
+            backgroundColor: ['#4f46e5', '#3b82f6', '#10b981'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        cutout: '70%',
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+// Simulate Live Data Update for Line Chart
+setInterval(() => {
+    rssiChart.data.datasets[0].data.shift();
+    rssiChart.data.datasets[0].data.push(Math.floor(Math.random() * ( -50 - (-90) ) + (-90)));
+    rssiChart.update();
+}, 2000);
+function updateSignalUI(rssi) {
+    const dot = document.getElementById('rssi-dot');
+    const label = document.getElementById('rssi-label');
+    const valText = document.getElementById('rssi-value');
+    const bar = document.getElementById('rssi-bar');
+
+    valText.innerText = `${rssi} dBm`;
+
+   
+    if (rssi >= -60) {
+        label.innerText = "Excellent";
+        label.style.color = "#10b981"; // Green
+        dot.style.background = "#10b981";
+        bar.style.background = "#10b981";
+        bar.style.width = "95%";
+    } else if (rssi >= -80) {
+        label.innerText = "Fair";
+        label.style.color = "#f59e0b"; // Amber
+        dot.style.background = "#f59e0b";
+        bar.style.background = "#f59e0b";
+        bar.style.width = "60%";
+    } else {
+        label.innerText = "Poor";
+        label.style.color = "#ef4444"; // Red
+        dot.style.background = "#ef4444";
+        bar.style.background = "#ef4444";
+        bar.style.width = "30%";
+    }
+}
+
+
+setInterval(() => {
+   
+    const mockRSSI = Math.floor(Math.random() * (-40 - (-100) + 1) + (-100));
+    updateSignalUI(mockRSSI);
+    
+   
+    if (rssiChart) {
+        rssiChart.data.datasets[0].data.shift();
+        rssiChart.data.datasets[0].data.push(mockRSSI);
+        rssiChart.update();
+    }
+}, 3000);

@@ -406,3 +406,33 @@ body {
     object-fit: cover;
     object-position: center;
 }
+/* Ensure chart cards have a consistent height */
+.chart-card {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+    margin-top: auto;
+}
+
+/* Optional: Add a "Pulse" animation for live status cards */
+.pulse-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
